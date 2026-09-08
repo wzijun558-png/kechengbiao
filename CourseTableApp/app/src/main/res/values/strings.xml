@@ -38,6 +38,8 @@
     <string name="day_of_week_monday">周一</string>
     <string name="lesson_notification_channel">课程提醒</string>
     <string name="lesson_notification_channel_desc">课程安排提醒（可显示在锁屏）</string>
+    <string name="lesson_message_channel">软件消息</string>
+    <string name="lesson_message_channel_desc">应用内消息通知（不依赖日历与时钟，可显示在锁屏）</string>
     <string name="notify_title">今日课程 · %1$s</string>
     <string name="notify_no_class">今天没有安排课程，好好休息吧</string>
     <string name="notify_permission_hint">请允许通知权限，才能收到每日课程提醒</string>

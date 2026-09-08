@@ -39,11 +39,14 @@ import java.time.format.DateTimeFormatter
 object DailyReminder {
 
     const val CHANNEL_ID = "course_reminders"
+    const val CHANNEL_MSG_ID = "course_messages"
     const val ACTION_DAILY = "com.coursetable.app.action.DAILY_FIRE"
     const val ACTION_CLASS = "com.coursetable.app.action.CLASS_FIRE"
     const val ACTION_REPLAN = "com.coursetable.app.action.REPLAN"
+    const val ACTION_MIDNIGHT = "com.coursetable.app.action.MIDNIGHT_CLEANUP"
     private const val RC_DAILY = 1024
     private const val RC_BASE = 3000
+    private const val RC_MIDNIGHT = 4096
     private const val KEY_CODES = "class_alarm_codes"
 
     fun ensureChannel(context: Context) {
@@ -70,6 +73,30 @@ object DailyReminder {
         }
     }
 
+    /** 软件消息频道：应用内消息通知（不依赖日历与时钟），锁屏可见。 */
+    fun ensureMessageChannel(context: Context) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val nm = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            val cur = nm.getNotificationChannel(CHANNEL_MSG_ID)
+            if (cur != null && cur.importance < NotificationManager.IMPORTANCE_HIGH) {
+                nm.deleteNotificationChannel(CHANNEL_MSG_ID)
+            }
+            val ch = NotificationChannel(
+                CHANNEL_MSG_ID,
+                context.getString(R.string.lesson_message_channel),
+                NotificationManager.IMPORTANCE_HIGH
+            ).apply {
+                description = context.getString(R.string.lesson_message_channel_desc)
+                enableVibration(true)
+                lockscreenVisibility = NotificationCompat.VISIBILITY_PUBLIC   // 锁屏可显示内容
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                    setShowBadge(false)
+                }
+            }
+            nm.createNotificationChannel(ch)
+        }
+    }
+
     fun hasPermission(context: Context): Boolean =
         Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU ||
             ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) ==
@@ -78,11 +105,13 @@ object DailyReminder {
     /** 依设置重新调度：模式0=每日汇总；模式1=逐节课前提醒。 */
     fun reschedule(context: Context) {
         ensureChannel(context)
+        ensureMessageChannel(context)
         val store = Store(context)
         cancelAll(context)
         val schedule = store.schedule() ?: return
         if (!store.notifyEnabled) return
         if (store.notifyVia == 1) return   // 手机日历模式：由系统日历负责提醒，不排本机闹钟
+        armMidnightCleanup(context)        // 北京时间 24:00 自动清理已发生闹钟
         when (store.notifyMode) {
             1 -> planClassAlarms(context, store, schedule)
             else -> planDailyAlarm(context, store)
@@ -92,6 +121,7 @@ object DailyReminder {
     fun cancelAll(context: Context) {
         val am = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
         am.cancel(dailyPending(context))
+        am.cancel(midnightPending(context))
         val codes = loadCodes(context)
         for (code in codes) {
             am.cancel(classPending(context, code, null))
@@ -107,7 +137,7 @@ object DailyReminder {
         val (h, m) = store.notifyTime
         val next = nextTrigger(LocalTime.of(h, m))
         val at = next.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
-        setAlarm(am, at, dailyPending(context), false)
+        setAlarm(am, at, dailyPending(context), store.notifyVia != 2)   // 软件消息用非精确闹钟
     }
 
     private fun nextTrigger(time: LocalTime): LocalDateTime {
@@ -148,7 +178,7 @@ object DailyReminder {
                 val extra = courseExtras(e, date)
                 val at = fire.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
                 if (at < nowMs) continue
-                setAlarm(am, at, classPending(context, code, extra), true)
+                setAlarm(am, at, classPending(context, code, extra), store.notifyVia != 2)
             }
         }
         clearCodes(context)
@@ -164,13 +194,14 @@ object DailyReminder {
             putString("teacher", e.teacher.trim())
             putString("room", e.room.trim())
             putString("date", date.toString())
+            putString("weeks", e.weeksText.trim())
         }
     }
 
     private fun setAlarm(am: AlarmManager, at: Long, pi: PendingIntent, exact: Boolean) {
         try {
             if (exact) am.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, at, pi)
-            else am.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, at, pi)
+            else am.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, at, pi)
         } catch (se: SecurityException) {
             am.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, at, pi)
         }
@@ -206,6 +237,35 @@ object DailyReminder {
             .edit().remove(KEY_CODES).apply()
     }
 
+    // ---------------- 北京时间 24:00 清理已发生闹钟 ----------------
+    /** 午夜清理：取消全部已发生闹钟，并重排后续滚动窗口。 */
+    fun midnightCleanup(context: Context) {
+        cancelAll(context)
+        reschedule(context)
+    }
+
+    private fun armMidnightCleanup(context: Context) {
+        val am = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        val zone = ZoneId.of("Asia/Shanghai")
+        val at = LocalDate.now(zone).plusDays(1).atStartOfDay(zone).toInstant().toEpochMilli()
+        try {
+            am.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, at, midnightPending(context))
+        } catch (se: SecurityException) {
+            am.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, at, midnightPending(context))
+        }
+    }
+
+    private fun midnightPending(context: Context): PendingIntent {
+        val i = Intent(context, MidnightCleanupReceiver::class.java).setAction(ACTION_MIDNIGHT)
+        return PendingIntent.getBroadcast(
+            context, RC_MIDNIGHT, i,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+    }
+
+    /** 是否“软件消息”方式（via=2）：消息风格、非闹铃风格。 */
+    private fun isMessage(context: Context): Boolean = Store(context).notifyVia == 2
+
     // ---------------- 通知构建与发送 ----------------
     fun openDayIntent(context: Context, date: String?): PendingIntent {
         val open = Intent(context, MainActivity::class.java).apply {
@@ -235,25 +295,28 @@ object DailyReminder {
         notify(
             context, 2001, title,
             body ?: context.getString(R.string.notify_no_class),
-            openDayIntent(context, today.toString()), false
+            openDayIntent(context, today.toString()), !isMessage(context)
         )
     }
 
     fun postClass(context: Context, extra: Bundle?) {
         ensureChannel(context)
+        ensureMessageChannel(context)
         if (!hasPermission(context)) return
         val name = extra?.getString("name") ?: "课程"
         val label = extra?.getString("label") ?: ""
         val range = extra?.getString("range") ?: ""
         val teacher = extra?.getString("teacher") ?: ""
         val room = extra?.getString("room") ?: ""
+        val weeks = extra?.getString("weeks") ?: ""
         val date = extra?.getString("date")
         val title = "上课提醒 · $name"
         val sb = StringBuilder("即将上课：$name")
         if (label.isNotEmpty() || range.isNotEmpty()) sb.append("\n[$label ${range.trim()}]")
         if (teacher.isNotEmpty()) sb.append("\n教师：").append(teacher)
         if (room.isNotEmpty()) sb.append("\n教室：").append(room)
-        notify(context, 2002, title, sb.toString(), openDayIntent(context, date), true)
+        if (weeks.isNotEmpty()) sb.append("\n周次：").append(weeks)
+        notify(context, 2002, title, sb.toString(), openDayIntent(context, date), !isMessage(context))
     }
 
     private fun notify(
@@ -262,9 +325,10 @@ object DailyReminder {
         title: String,
         content: String,
         contentIntent: PendingIntent,
-        fullScreen: Boolean
+        alarmStyle: Boolean
     ) {
-        val b = NotificationCompat.Builder(context, CHANNEL_ID)
+        val channel = if (alarmStyle) CHANNEL_ID else CHANNEL_MSG_ID
+        val b = NotificationCompat.Builder(context, channel)
             .setSmallIcon(R.drawable.ic_notify)
             .setContentTitle(title)
             .setContentText(content.lines().firstOrNull() ?: content)
@@ -272,9 +336,12 @@ object DailyReminder {
             .setContentIntent(contentIntent)
             .setAutoCancel(true)
             .setPriority(NotificationCompat.PRIORITY_HIGH)
-            .setCategory(NotificationCompat.CATEGORY_ALARM)
+            .setCategory(
+                if (alarmStyle) NotificationCompat.CATEGORY_ALARM
+                else NotificationCompat.CATEGORY_REMINDER
+            )
             .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
-        if (fullScreen && Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+        if (alarmStyle && Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             try {
                 b.setFullScreenIntent(contentIntent, true) // 熄屏/锁屏可全屏提醒（部分机型受系统限制自动降级）
             } catch (ignored: Throwable) {
@@ -343,6 +410,15 @@ class BootReceiver : BroadcastReceiver() {
             Intent.ACTION_TIME_CHANGED,
             Intent.ACTION_TIMEZONE_CHANGED,
             Intent.ACTION_DATE_CHANGED -> DailyReminder.reschedule(context)
+        }
+    }
+}
+
+/** 北京时间 24:00：消去已发生闹钟，并重排后续提醒。 */
+class MidnightCleanupReceiver : BroadcastReceiver() {
+    override fun onReceive(context: Context, intent: Intent) {
+        if (intent.action == DailyReminder.ACTION_MIDNIGHT) {
+            DailyReminder.midnightCleanup(context)
         }
     }
 }

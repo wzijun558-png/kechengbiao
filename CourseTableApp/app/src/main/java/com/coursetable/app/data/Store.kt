@@ -89,10 +89,10 @@ class Store(context: Context) {
         get() = sp.getInt(KEY_CLASS_LEAD, 10).let { if (it in intArrayOf(5, 10, 15, 30)) it else 10 }
         set(v) = sp.edit().putInt(KEY_CLASS_LEAD, if (v in intArrayOf(5, 10, 15, 30)) v else 10).apply()
 
-    /** 通知方式：0=时钟(本机闹钟)；1=手机日历(同步系统日历)。 */
+    /** 通知方式：0=时钟(本机闹钟)；1=手机日历(同步系统日历)；2=软件消息(应用内通知)。 */
     var notifyVia: Int
-        get() = sp.getInt(KEY_NOTIFY_VIA, 0).let { if (it == 1) 1 else 0 }
-        set(v) = sp.edit().putInt(KEY_NOTIFY_VIA, if (v == 1) 1 else 0).apply()
+        get() = sp.getInt(KEY_NOTIFY_VIA, 0).let { if (it in 0..2) it else 0 }
+        set(v) = sp.edit().putInt(KEY_NOTIFY_VIA, if (v in 0..2) v else 0).apply()
 
     /** 自动检查更新的日期（每日一次）。 */
     var lastAutoUpdateDay: String

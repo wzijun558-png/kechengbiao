@@ -47,7 +47,9 @@ class SettingsFragment : Fragment() {
         val rgVia = v.findViewById<RadioGroup>(R.id.rgVia)
         val rbClock = v.findViewById<RadioButton>(R.id.rbClock)
         val rbCalendar = v.findViewById<RadioButton>(R.id.rbCalendar)
+        val rbApp = v.findViewById<RadioButton>(R.id.rbApp)
         val rowViaHint = v.findViewById<TextView>(R.id.rowViaHint)
+        val rowClearCalSync = v.findViewById<TextView>(R.id.rowClearCalSync)
         val rowTimingLabel = v.findViewById<TextView>(R.id.rowTimingLabel)
         val rowTime = v.findViewById<TextView>(R.id.rowNotifyTime)
         val rowTerm = v.findViewById<TextView>(R.id.rowTermStart)
@@ -66,6 +68,7 @@ class SettingsFragment : Fragment() {
             viaGuard = true
             rbClock.isChecked = via == 0
             rbCalendar.isChecked = via == 1
+            rbApp.isChecked = via == 2
             viaGuard = false
             val isCalendar = via == 1
             rowTimingLabel.visibility = if (isCalendar) View.GONE else View.VISIBLE
@@ -77,10 +80,10 @@ class SettingsFragment : Fragment() {
             rowTime.visibility = if (!isCalendar && mode == 0) View.VISIBLE else View.GONE
             rowLead.visibility = if (!isCalendar && mode == 1) View.VISIBLE else View.GONE
             rowLead.text = "课前提醒时间：上课前 ${store.classLeadMin} 分钟（点按切换 5/10/15/30）"
-            rowViaHint.text = if (isCalendar) {
-                "已选择手机日历：将课程写入系统日历，由日历在每节课前 ${store.classLeadMin} 分钟提醒。"
-            } else {
-                "已选择时钟：使用本机闹钟提醒（可每日汇总，或每节课前单独提醒）。"
+            rowViaHint.text = when (via) {
+                1 -> "已选择手机日历：将课程写入系统日历，由日历在每节课前 ${store.classLeadMin} 分钟提醒。"
+                2 -> "已选择软件消息：应用内消息通知（不依赖日历与时钟），锁屏可见。"
+                else -> "已选择时钟：本机闹钟逐条设置闹铃并附课程备注；北京时间 24:00 自动清理已发生闹钟。"
             }
             rowModeHint.text = if (mode == 0) {
                 "每天在设定时间推送当天全部课程（锁屏可见）。"
@@ -93,11 +96,20 @@ class SettingsFragment : Fragment() {
             ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.WRITE_CALENDAR) ==
                 PackageManager.PERMISSION_GRANTED
 
+        /** 日历模式下显示“消除同步”入口（同步了事件才可见）。 */
+        fun refreshCalSyncRow() {
+            val count = CalendarSync.syncedEventCount(requireContext())
+            val show = store.notifyVia == 1 && count > 0
+            rowClearCalSync.visibility = if (show) View.VISIBLE else View.GONE
+            rowClearCalSync.text = if (show) "消除日历同步（已同步 $count 条课程事件）" else "消除日历同步"
+        }
+
         /** 按「启用开关 + 通知方式」统一协调：时钟→本机闹钟；手机日历→系统日历。 */
         fun syncNotifications() {
             if (!store.notifyEnabled) {
                 DailyReminder.cancel(requireContext())
                 Thread { CalendarSync.removeAll(requireContext()) }.start()
+                refreshCalSyncRow()
                 return
             }
             if (store.notifyVia == 1) {
@@ -117,6 +129,7 @@ class SettingsFragment : Fragment() {
             } else {
                 Thread { CalendarSync.removeAll(requireContext()) }.start()
                 DailyReminder.reschedule(requireContext())
+                refreshCalSyncRow()
             }
         }
 
@@ -141,6 +154,7 @@ class SettingsFragment : Fragment() {
                 "，周一）"
             applyModeUi()
             rowUpdate.text = "检查更新（当前版本 ${com.coursetable.app.BuildConfig.VERSION_NAME}）"
+            refreshCalSyncRow()
         }
 
         swNotify.isChecked = store.notifyEnabled
@@ -155,7 +169,11 @@ class SettingsFragment : Fragment() {
 
         rgVia.setOnCheckedChangeListener { _, checkedId ->
             if (viaGuard) return@setOnCheckedChangeListener
-            store.notifyVia = if (checkedId == R.id.rbCalendar) 1 else 0
+            store.notifyVia = when (checkedId) {
+                R.id.rbCalendar -> 1
+                R.id.rbApp -> 2
+                else -> 0
+            }
             applyModeUi()
             syncNotifications()
         }
@@ -206,6 +224,24 @@ class SettingsFragment : Fragment() {
         swWeekend.setOnCheckedChangeListener { _, checked ->
             store.showWeekend = checked
             act.refreshAll()
+        }
+
+        rowClearCalSync.setOnClickListener {
+            val count = CalendarSync.syncedEventCount(requireContext())
+            MaterialAlertDialogBuilder(requireContext())
+                .setTitle("消除日历同步")
+                .setMessage("将从系统日历删除本应用同步的全部课程事件（$count 条）。课表数据不受影响。")
+                .setNegativeButton("取消", null)
+                .setPositiveButton("消除") { _, _ ->
+                    Thread {
+                        CalendarSync.removeAll(requireContext())
+                        act.runOnUiThread {
+                            refreshCalSyncRow()
+                            Toast.makeText(requireContext(), "已消除日历同步", Toast.LENGTH_SHORT).show()
+                        }
+                    }.start()
+                }
+                .show()
         }
 
         rowUpdate.setOnClickListener {
@@ -278,6 +314,13 @@ class SettingsFragment : Fragment() {
             }.getOrElse { e -> "同步失败：${e.message}" }
             act.runOnUiThread {
                 rgVia.isEnabled = true
+                val row = root?.findViewById<TextView>(R.id.rowClearCalSync)
+                val count = CalendarSync.syncedEventCount(requireContext())
+                if (row != null) {
+                    val show = act.store.notifyVia == 1 && count > 0
+                    row.visibility = if (show) View.VISIBLE else View.GONE
+                    row.text = if (show) "消除日历同步（已同步 $count 条课程事件）" else "消除日历同步"
+                }
                 Toast.makeText(requireContext(), msg, Toast.LENGTH_LONG).show()
             }
         }.start()

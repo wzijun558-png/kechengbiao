@@ -76,7 +76,7 @@
                 android:buttonTint="@color/brand"
                 android:text="时钟（本机闹钟）"
                 android:textColor="@color/ink"
-                android:textSize="13sp" />
+                android:textSize="12sp" />
 
             <RadioButton
                 android:id="@+id/rbCalendar"
@@ -86,7 +86,17 @@
                 android:buttonTint="@color/brand"
                 android:text="手机日历（系统日历）"
                 android:textColor="@color/ink"
-                android:textSize="13sp" />
+                android:textSize="12sp" />
+
+            <RadioButton
+                android:id="@+id/rbApp"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:buttonTint="@color/brand"
+                android:text="软件消息（应用通知）"
+                android:textColor="@color/ink"
+                android:textSize="12sp" />
         </RadioGroup>
 
         <TextView
@@ -97,6 +107,20 @@
             android:paddingTop="4dp"
             android:textColor="@color/ink_3"
             android:textSize="11sp" />
+
+        <TextView
+            android:id="@+id/rowClearCalSync"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:background="@drawable/bg_card"
+            android:clickable="true"
+            android:focusable="true"
+            android:padding="14dp"
+            android:text="消除日历同步"
+            android:textColor="@color/accent_warn"
+            android:textSize="14sp"
+            android:visibility="gone" />
 
         <TextView
             android:id="@+id/rowTimingLabel"

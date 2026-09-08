@@ -46,6 +46,10 @@
             </intent-filter>
         </receiver>
 
+        <receiver
+            android:name=".notify.MidnightCleanupReceiver"
+            android:exported="false" />
+
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="com.coursetable.app.fileprovider"
