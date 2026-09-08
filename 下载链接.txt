@@ -1,16 +1,17 @@
 课程表 v1.2 下载方式（2026-09-08 更新）
 ========================================
 
-【七牛云国内直链】（推荐，速度快；下载后重命名为 .apk 再安装）
-http://tl1yx3dr2.hb-bkt.clouddn.com/course-table-1.2.zip
-
-【GitHub 官方直链】（备用）
+【主下载（.apk 文件，点击即可安装）】
+GitHub 官方直链：
 https://github.com/wzijun558-png/kechengbiao/releases/download/v1.2/course-table-1.2.apk
 
-【GitHub 加速备用】
+【国内加速镜像（.apk 文件）】
 https://ghfast.top/https://github.com/wzijun558-png/kechengbiao/releases/download/v1.2/course-table-1.2.apk
 https://gh-proxy.com/https://github.com/wzijun558-png/kechengbiao/releases/download/v1.2/course-table-1.2.apk
 https://ghproxy.net/https://github.com/wzijun558-png/kechengbiao/releases/download/v1.2/course-table-1.2.apk
+
+【七牛云（App 内自动更新使用；网页下载为 .zip，改名 .apk 后安装）】
+http://tl1yx3dr2.hb-bkt.clouddn.com/course-table-1.2.zip
 
 【更新清单】（App 自动检查用）
 https://raw.githubusercontent.com/wzijun558-png/kechengbiao/main/update.json
@@ -23,11 +24,10 @@ https://github.com/wzijun558-png/kechengbiao
 MD5：a5eb58ff62fbaac1246ca0e60cecc08c
 
 【升级说明】
-- 已安装旧版本的用户：App 内「设置 → 检查更新」直接在线升级（签名一致，无需卸载）。
+- 已安装旧版本的用户：App 内「设置 → 检查更新」直接在线升级（签名一致，无需卸载），自动优先走七牛云直链、失败回退 GitHub。
 - 首次安装：需允许「安装未知应用」。
-- App 内更新自动优先走七牛直链，失败自动回退 GitHub。
 
 【配套文件】
 download.html    下载页（电脑打开即可点链接，含二维码）
-qr-download.png  下载二维码（手机扫码直达七牛直链）
+qr-download.png  下载二维码（手机扫码直达 .apk 直链）
 
