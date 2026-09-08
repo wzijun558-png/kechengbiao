@@ -1,23 +1,27 @@
-课程表 v1.0 下载方式（2026-09-08 生成）
+课程表 v1.1 下载方式（2026-09-08 更新）
 ========================================
 
 【官方直链】（推荐，GitHub Release 资产）
-https://github.com/wzijun558-png/kechengbiao/releases/download/v1.0/course-table-1.0.apk
+https://github.com/wzijun558-png/kechengbiao/releases/download/v1.1/course-table-1.1.apk
 
 【国内加速备用】（内容与官方直链一致，均已验证可用）
-https://ghfast.top/https://github.com/wzijun558-png/kechengbiao/releases/download/v1.0/course-table-1.0.apk
-https://gh-proxy.com/https://github.com/wzijun558-png/kechengbiao/releases/download/v1.0/course-table-1.0.apk
-https://ghproxy.net/https://github.com/wzijun558-png/kechengbiao/releases/download/v1.0/course-table-1.0.apk
+https://ghfast.top/https://github.com/wzijun558-png/kechengbiao/releases/download/v1.1/course-table-1.1.apk
+https://gh-proxy.com/https://github.com/wzijun558-png/kechengbiao/releases/download/v1.1/course-table-1.1.apk
+https://ghproxy.net/https://github.com/wzijun558-png/kechengbiao/releases/download/v1.1/course-table-1.1.apk
 
-【更新清单】（App 自动检查用，勿手改字段顺序）
+【更新清单】（App 自动检查用）
 https://raw.githubusercontent.com/wzijun558-png/kechengbiao/main/update.json
 
 【源码仓库】
 https://github.com/wzijun558-png/kechengbiao
 
 【文件校验】
-大小：7017122 字节（约 6.7 MiB）
-MD5：1b3c23f1ccf6fbb3e41589060c0045af
+大小：5970334 字节（约 5.7 MiB）
+MD5：22be43695b97dfaf296df193f343658c
+
+【升级说明】
+- 已安装 v1.0 的用户：App 内「设置 → 检查更新」直接在线升级（签名一致，无需卸载）。
+- 首次安装：需允许「安装未知应用」。
 
 【配套文件】
 download.html    下载页（电脑打开即可点链接，含二维码）
