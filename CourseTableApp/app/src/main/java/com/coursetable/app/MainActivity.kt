@@ -23,6 +23,7 @@ import com.coursetable.app.ui.OverviewFragment
 import com.coursetable.app.ui.SettingsFragment
 import com.coursetable.app.ui.WeekFragment
 import com.coursetable.app.util.CrashCatcher
+import com.coursetable.app.util.CalendarSync
 import com.coursetable.app.util.UpdateChecker
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -253,6 +254,16 @@ class MainActivity : AppCompatActivity() {
         store.saveSchedule(s, sourceName)
         if (store.termStart != s.week1Monday) store.termStart = s.week1Monday
         DailyReminder.reschedule(this)
+        // 日历模式下重新同步：先彻底清掉旧事件（含标记兜底），再写入新课表
+        if (store.notifyEnabled && store.notifyVia == 1) {
+            Thread {
+                val msg = runCatching {
+                    CalendarSync.resync(this, s, store.classLeadMin)
+                    "已同步 ${CalendarSync.syncedEventCount(this)} 条课程事件到系统日历"
+                }.getOrElse { e -> "日历同步失败：${e.message}" }
+                runOnUiThread { Toast.makeText(this, msg, Toast.LENGTH_LONG).show() }
+            }.start()
+        }
         refreshAll()
         Toast.makeText(this, "导入成功：${s.entries.size} 条排课", Toast.LENGTH_SHORT).show()
         goBackToMain()
@@ -261,6 +272,7 @@ class MainActivity : AppCompatActivity() {
     fun onScheduleCleared() {
         store.clearSchedule()
         DailyReminder.cancel(this)
+        Thread { CalendarSync.removeAll(this) }.start()   // 课表清除时一并清掉系统日历里的同步事件
         refreshAll()
         Toast.makeText(this, "已清除课表", Toast.LENGTH_SHORT).show()
         goBackToMain()

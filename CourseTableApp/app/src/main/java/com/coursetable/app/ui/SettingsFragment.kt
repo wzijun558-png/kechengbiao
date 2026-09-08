@@ -227,17 +227,16 @@ class SettingsFragment : Fragment() {
         }
 
         rowClearCalSync.setOnClickListener {
-            val count = CalendarSync.syncedEventCount(requireContext())
             MaterialAlertDialogBuilder(requireContext())
                 .setTitle("消除日历同步")
-                .setMessage("将从系统日历删除本应用同步的全部课程事件（$count 条）。课表数据不受影响。")
+                .setMessage("将从系统日历中删除本应用同步的全部课程事件（含历史遗留）。课表数据不受影响。")
                 .setNegativeButton("取消", null)
                 .setPositiveButton("消除") { _, _ ->
                     Thread {
-                        CalendarSync.removeAll(requireContext())
+                        val removed = CalendarSync.removeAll(requireContext())
                         act.runOnUiThread {
                             refreshCalSyncRow()
-                            Toast.makeText(requireContext(), "已消除日历同步", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(requireContext(), "已消除日历同步（删除 $removed 条事件）", Toast.LENGTH_SHORT).show()
                         }
                     }.start()
                 }

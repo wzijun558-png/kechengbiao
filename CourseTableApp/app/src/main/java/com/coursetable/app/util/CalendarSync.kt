@@ -18,6 +18,8 @@ object CalendarSync {
 
     private const val PREF = "coursetable"
     private const val KEY_IDS = "calendar_event_ids"
+    /** 事件描述中的同步标记：兜底清理时靠它识别本应用创建的事件。 */
+    private const val MARKER = "课程表同步"
 
     class SyncException(message: String) : Exception(message)
 
@@ -50,18 +52,36 @@ object CalendarSync {
 
     fun syncedEventCount(context: Context): Int = loadIds(context).size
 
-    /** 清除历史同步事件（幂等）。 */
-    fun removeAll(context: Context) {
+    /** 清除历史同步事件（幂等），返回实际删除条数：
+     *  1) 按记录的 ID 逐个删除；
+     *  2) 再按描述标记兜底扫描删除（解决 ID 丢失、中途失败造成的消去不完全）。 */
+    fun removeAll(context: Context): Int {
         val cr = context.contentResolver
+        val uri = CalendarContract.Events.CONTENT_URI
+        var removed = 0
         for (id in loadIds(context)) {
             runCatching {
-                cr.delete(
-                    ContentUris.withAppendedId(CalendarContract.Events.CONTENT_URI, id),
-                    null, null
-                )
+                removed += cr.delete(ContentUris.withAppendedId(uri, id), null, null)
+            }
+        }
+        // 兜底：删除所有带同步标记的事件（即使 ID 记录丢失也能清干净）
+        runCatching {
+            val proj = arrayOf(CalendarContract.Events._ID)
+            cr.query(
+                uri, proj,
+                CalendarContract.Events.DESCRIPTION + " LIKE ?",
+                arrayOf("%" + MARKER + "%"), null
+            )?.use { c ->
+                while (c.moveToNext()) {
+                    val id = c.getLong(0)
+                    runCatching {
+                        removed += cr.delete(ContentUris.withAppendedId(uri, id), null, null)
+                    }
+                }
             }
         }
         clearIds(context)
+        return removed
     }
 
     /** 全量重新同步：先清除旧事件，再按周展开写入（带课前提醒）。 */
@@ -73,7 +93,8 @@ object CalendarSync {
         val zone = ZoneId.systemDefault()
         val inserted = ArrayList<Long>()
         var total = 0
-        for (e in schedule.entries) {
+        try {
+            for (e in schedule.entries) {
             if (e.day > 6) continue
             val startMin = TimeText.startMinutes(e.startSlot) ?: continue
             val endMin = TimeText.endMinutes(e.endSlot()) ?: continue
@@ -95,6 +116,7 @@ object CalendarSync {
                         if (e.teacher.isNotBlank()) append("教师：").append(e.teacher.trim()).append('\n')
                         if (e.room.isNotBlank()) append("教室：").append(e.room.trim()).append('\n')
                         if (e.weeksText.isNotEmpty()) append("周次：").append(e.weeksText)
+                        append("\n\n来源：").append(MARKER)
                     })
                     put(CalendarContract.Events.DTSTART, startMs)
                     put(CalendarContract.Events.DTEND, endMs)
@@ -113,8 +135,11 @@ object CalendarSync {
                 inserted.add(eventId)
                 total++
             }
+            }
+        } finally {
+            // 即使中途失败也记录已插入的 ID，保证下次同步/消除能彻底清掉
+            if (inserted.isNotEmpty()) storeIds(context, inserted)
         }
-        storeIds(context, inserted)
     }
 
     private fun loadIds(context: Context): List<Long> {
