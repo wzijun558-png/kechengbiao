@@ -1,0 +1,544 @@
+{
+ "formatVersion": 1,
+ "sourceFile": "课表.xls",
+ "term": {
+  "titleLines": [
+   "2026-2027学年第1学期 王梓俊 课表",
+   "年级：2025  院系：财政金融学院  专业：金融学(本科)  姓名：王梓俊"
+  ],
+  "week1Monday": "2026-08-31",
+  "weekCount": 18,
+  "comment": "节次以每两节为一节课(保留节次序号)。12节次课 8:20-10:00; 34节次课 10:20-12:00; 56节次课 13:20-15:00; 78节次课 15:20-17:00; 910节次课 18:00-19:30。"
+ },
+ "weekdayNames": [
+  "星期一",
+  "星期二",
+  "星期三",
+  "星期四",
+  "星期五",
+  "星期六",
+  "星期日"
+ ],
+ "timeSlots": [
+  {
+   "slot": 1,
+   "label": "第1节"
+  },
+  {
+   "slot": 2,
+   "label": "第2节"
+  },
+  {
+   "slot": 3,
+   "label": "第3节"
+  },
+  {
+   "slot": 4,
+   "label": "第4节"
+  },
+  {
+   "slot": 5,
+   "label": "第5节"
+  },
+  {
+   "slot": 6,
+   "label": "第6节"
+  },
+  {
+   "slot": 7,
+   "label": "第7节"
+  },
+  {
+   "slot": 8,
+   "label": "第8节"
+  },
+  {
+   "slot": 9,
+   "label": "第9节"
+  },
+  {
+   "slot": 10,
+   "label": "第10节"
+  },
+  {
+   "slot": 11,
+   "label": "第11节"
+  },
+  {
+   "slot": 12,
+   "label": "第12节"
+  }
+ ],
+ "timePairs": [
+  {
+   "label": "1-2节",
+   "time12h": "8:20-10:00",
+   "time24h": "8:20-10:00"
+  },
+  {
+   "label": "3-4节",
+   "time12h": "10:20-12:00",
+   "time24h": "10:20-12:00"
+  },
+  {
+   "label": "5-6节",
+   "time12h": "1:20-3:00",
+   "time24h": "13:20-15:00"
+  },
+  {
+   "label": "7-8节",
+   "time12h": "3:20-5:00",
+   "time24h": "15:20-17:00"
+  },
+  {
+   "label": "9-10节",
+   "time12h": "6:00-7:30",
+   "time24h": "18:00-19:30"
+  }
+ ],
+ "entries": [
+  {
+   "day": 0,
+   "name": "劳动技能-",
+   "teacher": "王梓",
+   "weeksText": "【17周】",
+   "weeks": [
+    17
+   ],
+   "weeksUnparsed": null,
+   "room": "实验楼A402",
+   "startSlot": 1,
+   "slotSpan": 6,
+   "raw": "劳动技能-\n王梓【17周】\n实验楼A402"
+  },
+  {
+   "day": 0,
+   "name": "证券投资学(理论)",
+   "teacher": "吴南",
+   "weeksText": "【1-9,11-16周】",
+   "weeks": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16
+   ],
+   "weeksUnparsed": null,
+   "room": "三教433",
+   "startSlot": 3,
+   "slotSpan": 2,
+   "raw": "证券投资学(理论)\n吴南【1-9,11-16周】\n三教433"
+  },
+  {
+   "day": 0,
+   "name": "大学生心理健康教育(理论)",
+   "teacher": "崔慧旭",
+   "weeksText": "【1-9,11-16,18周】",
+   "weeks": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    18
+   ],
+   "weeksUnparsed": null,
+   "room": "二教B203",
+   "startSlot": 5,
+   "slotSpan": 2,
+   "raw": "大学生心理健康教育(理论)\n崔慧旭【1-9,11-16,18周】\n二教B203"
+  },
+  {
+   "day": 1,
+   "name": "毛泽东思想和中国特色社会主义理论体系概论(理论)",
+   "teacher": "薛俊生",
+   "weeksText": "【1-9,11-16,18周】",
+   "weeks": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    18
+   ],
+   "weeksUnparsed": null,
+   "room": "二教B105",
+   "startSlot": 1,
+   "slotSpan": 2,
+   "raw": "毛泽东思想和中国特色社会主义理论体系概论(理论)\n薛俊生【1-9,11-16,18周】\n二教B105"
+  },
+  {
+   "day": 1,
+   "name": "劳动技能-",
+   "teacher": "王梓",
+   "weeksText": "【17周】",
+   "weeks": [
+    17
+   ],
+   "weeksUnparsed": null,
+   "room": "实验楼A402",
+   "startSlot": 1,
+   "slotSpan": 6,
+   "raw": "劳动技能-\n王梓【17周】\n实验楼A402"
+  },
+  {
+   "day": 1,
+   "name": "证券投资学(理论)",
+   "teacher": "吴南",
+   "weeksText": "【16周】",
+   "weeks": [
+    16
+   ],
+   "weeksUnparsed": null,
+   "room": "三教119",
+   "startSlot": 4,
+   "slotSpan": 1,
+   "raw": "证券投资学(理论)\n吴南【16周】\n三教119"
+  },
+  {
+   "day": 1,
+   "name": "创业基础(理论)",
+   "teacher": "李力",
+   "weeksText": "【4,9,13周】",
+   "weeks": [
+    4,
+    9,
+    13
+   ],
+   "weeksUnparsed": null,
+   "room": "二教B203",
+   "startSlot": 7,
+   "slotSpan": 2,
+   "raw": "创业基础(理论)\n李力【4,9,13周】\n二教B203"
+  },
+  {
+   "day": 2,
+   "name": "线性代数B2(理论)",
+   "teacher": "张喆",
+   "weeksText": "【1-9,11-16,18周】",
+   "weeks": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    18
+   ],
+   "weeksUnparsed": null,
+   "room": "二教B203",
+   "startSlot": 1,
+   "slotSpan": 2,
+   "raw": "线性代数B2(理论)\n张喆【1-9,11-16,18周】\n二教B203"
+  },
+  {
+   "day": 2,
+   "name": "劳动技能-",
+   "teacher": "王梓",
+   "weeksText": "【17周】",
+   "weeks": [
+    17
+   ],
+   "weeksUnparsed": null,
+   "room": "实验楼A402",
+   "startSlot": 1,
+   "slotSpan": 4,
+   "raw": "劳动技能-\n王梓【17周】\n实验楼A402"
+  },
+  {
+   "day": 2,
+   "name": "证券投资学(理论)",
+   "teacher": "吴南",
+   "weeksText": "【2-8(双),12-16(双)周】",
+   "weeks": [
+    2,
+    4,
+    6,
+    8,
+    12,
+    14,
+    16
+   ],
+   "weeksUnparsed": null,
+   "room": "三教433",
+   "startSlot": 3,
+   "slotSpan": 2,
+   "raw": "证券投资学(理论)\n吴南【2-8(双),12-16(双)周】\n三教433"
+  },
+  {
+   "day": 2,
+   "name": "国际金融(理论)",
+   "teacher": "高明锋",
+   "weeksText": "【16周】",
+   "weeks": [
+    16
+   ],
+   "weeksUnparsed": null,
+   "room": "三教515",
+   "startSlot": 7,
+   "slotSpan": 3,
+   "raw": "国际金融(理论)\n高明锋【16周】\n三教515"
+  },
+  {
+   "day": 2,
+   "name": "宏观经济学(理论)",
+   "teacher": "纪希春",
+   "weeksText": "【1-9,11,13-14周】",
+   "weeks": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    11,
+    13,
+    14
+   ],
+   "weeksUnparsed": null,
+   "room": "一教B203",
+   "startSlot": 9,
+   "slotSpan": 2,
+   "raw": "宏观经济学(理论)\n纪希春【1-9,11,13-14周】\n一教B203"
+  },
+  {
+   "day": 3,
+   "name": "经济法概论(理论)",
+   "teacher": "赵忠良",
+   "weeksText": "【1-9,11,13-16,18周】",
+   "weeks": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    11,
+    13,
+    14,
+    15,
+    16,
+    18
+   ],
+   "weeksUnparsed": null,
+   "room": "三教105",
+   "startSlot": 1,
+   "slotSpan": 2,
+   "raw": "经济法概论(理论)\n赵忠良【1-9,11,13-16,18周】\n三教105"
+  },
+  {
+   "day": 3,
+   "name": "劳动技能-",
+   "teacher": "王梓",
+   "weeksText": "【17周】",
+   "weeks": [
+    17
+   ],
+   "weeksUnparsed": null,
+   "room": "实验楼A402",
+   "startSlot": 1,
+   "slotSpan": 6,
+   "raw": "劳动技能-\n王梓【17周】\n实验楼A402"
+  },
+  {
+   "day": 3,
+   "name": "国际金融(理论)",
+   "teacher": "高明锋",
+   "weeksText": "【1-9,11-16周】",
+   "weeks": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16
+   ],
+   "weeksUnparsed": null,
+   "room": "三教515",
+   "startSlot": 3,
+   "slotSpan": 2,
+   "raw": "国际金融(理论)\n高明锋【1-9,11-16周】\n三教515"
+  },
+  {
+   "day": 3,
+   "name": "体育3(理论)",
+   "teacher": "韩冬",
+   "weeksText": "【1-9,11,13-16周】",
+   "weeks": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    11,
+    13,
+    14,
+    15,
+    16
+   ],
+   "weeksUnparsed": null,
+   "room": "",
+   "startSlot": 5,
+   "slotSpan": 2,
+   "raw": "体育3(理论)\n韩冬【1-9,11,13-16周】"
+  },
+  {
+   "day": 3,
+   "name": "宏观经济学(理论)",
+   "teacher": "纪希春",
+   "weeksText": "【1-9,11,13-14周】",
+   "weeks": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    11,
+    13,
+    14
+   ],
+   "weeksUnparsed": null,
+   "room": "一教B104",
+   "startSlot": 7,
+   "slotSpan": 2,
+   "raw": "宏观经济学(理论)\n纪希春【1-9,11,13-14周】\n一教B104"
+  },
+  {
+   "day": 4,
+   "name": "劳动技能-",
+   "teacher": "王梓",
+   "weeksText": "【17周】",
+   "weeks": [
+    17
+   ],
+   "weeksUnparsed": null,
+   "room": "实验楼A402",
+   "startSlot": 1,
+   "slotSpan": 6,
+   "raw": "劳动技能-\n王梓【17周】\n实验楼A402"
+  },
+  {
+   "day": 4,
+   "name": "国际金融(理论)",
+   "teacher": "高明锋",
+   "weeksText": "【2-8(双),12-14(双)周】",
+   "weeks": [
+    2,
+    4,
+    6,
+    8,
+    12,
+    14
+   ],
+   "weeksUnparsed": null,
+   "room": "三教515",
+   "startSlot": 3,
+   "slotSpan": 2,
+   "raw": "国际金融(理论)\n高明锋【2-8(双),12-14(双)周】\n三教515"
+  },
+  {
+   "day": 4,
+   "name": "毛泽东思想和中国特色社会主义理论体系概论(理论)",
+   "teacher": "薛俊生",
+   "weeksText": "【2-8(双),12-18(双)周】",
+   "weeks": [
+    2,
+    4,
+    6,
+    8,
+    12,
+    14,
+    16,
+    18
+   ],
+   "weeksUnparsed": null,
+   "room": "二教B105",
+   "startSlot": 5,
+   "slotSpan": 2,
+   "raw": "毛泽东思想和中国特色社会主义理论体系概论(理论)\n薛俊生【2-8(双),12-18(双)周】\n二教B105"
+  },
+  {
+   "day": 4,
+   "name": "线性代数B2(理论)",
+   "teacher": "张喆",
+   "weeksText": "【1-15(单)周】",
+   "weeks": [
+    1,
+    3,
+    5,
+    7,
+    9,
+    11,
+    13,
+    15
+   ],
+   "weeksUnparsed": null,
+   "room": "二教B203",
+   "startSlot": 5,
+   "slotSpan": 2,
+   "raw": "线性代数B2(理论)\n张喆【1-15(单)周】\n二教B203"
+  }
+ ]
+}

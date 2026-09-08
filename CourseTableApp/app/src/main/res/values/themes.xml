@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.CourseTable" parent="Theme.Material3.Light.NoActionBar">
+        <item name="colorPrimary">@color/brand</item>
+        <item name="colorOnPrimary">@color/card</item>
+        <item name="colorPrimaryContainer">@color/brand_light</item>
+        <item name="colorOnPrimaryContainer">@color/brand_dark</item>
+        <item name="android:windowBackground">@color/bg</item>
+        <item name="android:statusBarColor">@color/bg</item>
+        <item name="android:windowLightStatusBar">true</item>
+    </style>
+
+    <style name="CourseCard" parent="Widget.Material3.CardView.Elevated">
+        <item name="cardCornerRadius">10dp</item>
+        <item name="cardElevation">1dp</item>
+        <item name="contentPadding">0dp</item>
+    </style>
+
+    <style name="SectionTitle" parent="TextAppearance.Material3.TitleMedium">
+        <item name="android:textColor">@color/ink</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="AppBarText" parent="TextAppearance.Material3.TitleLarge">
+        <item name="android:textColor">@color/ink</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+</resources>

@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="14dp">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:lineSpacingExtra="6dp"
+        android:text="@string/import_title"
+        android:textColor="@color/ink"
+        android:textSize="18sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="6dp"
+        android:lineSpacingExtra="5dp"
+        android:textColor="@color/ink_2"
+        android:textSize="13sp"
+        android:text="选择教务/课程表导出的 .xls 或 .xlsx 文件（星期为列或为行的表格均可自动识别）。导入内容将替换当前课表；本应用不内置任何示例数据。\n\n第一周周一（学期起点）可在「设置」中调整，导入解析会使用它。" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnPick"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:text="@string/import_pick" />
+
+    <ProgressBar
+        android:id="@+id/progress"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="18dp"
+        android:visibility="gone" />
+
+    <TextView
+        android:id="@+id/importStatus"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:gravity="center"
+        android:textColor="@color/ink_2"
+        android:textSize="13sp" />
+
+    <TextView
+        android:id="@+id/previewBox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:background="@drawable/bg_card"
+        android:lineSpacingExtra="4dp"
+        android:padding="12dp"
+        android:textColor="@color/ink"
+        android:textIsSelectable="true"
+        android:textSize="13sp"
+        android:visibility="gone" />
+
+    <LinearLayout
+        android:id="@+id/confirmRow"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:orientation="horizontal"
+        android:visibility="gone">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnImportCancel"
+            style="@style/Widget.Material3.Button.OutlinedButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/import_cancel" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnImportOk"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_weight="1"
+            android:text="@string/import_confirm" />
+    </LinearLayout>
+</LinearLayout>

@@ -1,0 +1,28 @@
+# === 签名密钥：严禁提交 ===
+keystore.properties
+*.jks
+keystore/
+
+# === 本机配置 ===
+local.properties
+
+# === Gradle / 构建产物 ===
+.gradle/
+build/
+buildenv/
+.gradle-home/
+android-sdk/
+android-user-home/
+
+# === 发布产物（APK 走 GitHub Release 分发，不入 git） ===
+release/
+*.apk
+
+# === 临时 / 导出文件 ===
+课表.dump.txt
+课表.xls
+__pycache__/
+
+# === IDE ===
+.idea/
+*.iml

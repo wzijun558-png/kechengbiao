@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="12dp">
+
+        <TextView
+            android:id="@+id/settingsScheduleInfo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_card"
+            android:padding="12dp"
+            android:textColor="@color/ink_2"
+            android:textSize="13sp" />
+
+        <com.google.android.material.materialswitch.MaterialSwitch
+            android:id="@+id/swNotify"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:paddingVertical="10dp"
+            android:text="@string/pref_notify_title"
+            android:textColor="@color/ink" />
+
+        <TextView
+            android:id="@+id/rowNotifyTime"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_card"
+            android:clickable="true"
+            android:focusable="true"
+            android:padding="14dp"
+            android:text="@string/pref_notify_time"
+            android:textColor="@color/ink_2"
+            android:textSize="14sp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:background="@drawable/bg_card"
+            android:padding="14dp"
+            android:text="通知可显示在锁屏；请任选一种提醒方式"
+            android:textColor="@color/ink_3"
+            android:textSize="12sp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:paddingHorizontal="6dp"
+            android:text="通知方式"
+            android:textColor="@color/ink_2"
+            android:textSize="13sp" />
+
+        <RadioGroup
+            android:id="@+id/rgVia"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_card"
+            android:orientation="horizontal"
+            android:padding="6dp">
+
+            <RadioButton
+                android:id="@+id/rbClock"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:buttonTint="@color/brand"
+                android:text="时钟（本机闹钟）"
+                android:textColor="@color/ink"
+                android:textSize="13sp" />
+
+            <RadioButton
+                android:id="@+id/rbCalendar"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:buttonTint="@color/brand"
+                android:text="手机日历（系统日历）"
+                android:textColor="@color/ink"
+                android:textSize="13sp" />
+        </RadioGroup>
+
+        <TextView
+            android:id="@+id/rowViaHint"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingHorizontal="8dp"
+            android:paddingTop="4dp"
+            android:textColor="@color/ink_3"
+            android:textSize="11sp" />
+
+        <TextView
+            android:id="@+id/rowTimingLabel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:paddingHorizontal="6dp"
+            android:text="提醒时机"
+            android:textColor="@color/ink_2"
+            android:textSize="13sp" />
+
+        <RadioGroup
+            android:id="@+id/rgMode"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_card"
+            android:orientation="horizontal"
+            android:padding="6dp">
+
+            <RadioButton
+                android:id="@+id/rbDaily"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:buttonTint="@color/brand"
+                android:text="每日定时汇总"
+                android:textColor="@color/ink"
+                android:textSize="13sp" />
+
+            <RadioButton
+                android:id="@+id/rbClass"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:buttonTint="@color/brand"
+                android:text="每节课前提醒"
+                android:textColor="@color/ink"
+                android:textSize="13sp" />
+        </RadioGroup>
+
+        <TextView
+            android:id="@+id/rowLead"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_card"
+            android:clickable="true"
+            android:focusable="true"
+            android:padding="14dp"
+            android:textColor="@color/ink_2"
+            android:textSize="14sp"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/rowModeHint"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingHorizontal="8dp"
+            android:paddingTop="4dp"
+            android:textColor="@color/ink_3"
+            android:textSize="11sp" />
+
+        <TextView
+            android:id="@+id/rowUpdate"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:background="@drawable/bg_card"
+            android:clickable="true"
+            android:focusable="true"
+            android:padding="14dp"
+            android:text="检查更新"
+            android:textColor="@color/ink_2"
+            android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/rowTermStart"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:background="@drawable/bg_card"
+            android:clickable="true"
+            android:focusable="true"
+            android:padding="14dp"
+            android:text="@string/pref_term_start"
+            android:textColor="@color/ink_2"
+            android:textSize="14sp" />
+
+        <com.google.android.material.materialswitch.MaterialSwitch
+            android:id="@+id/swWeekend"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:paddingVertical="10dp"
+            android:text="@string/pref_weekend"
+            android:textColor="@color/ink" />
+
+        <TextView
+            android:id="@+id/rowImport"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:background="@drawable/bg_card"
+            android:clickable="true"
+            android:focusable="true"
+            android:padding="14dp"
+            android:text="@string/pref_import_here"
+            android:textColor="@color/ink_2"
+            android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/rowClear"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_card"
+            android:clickable="true"
+            android:focusable="true"
+            android:padding="14dp"
+            android:text="@string/pref_clear"
+            android:textColor="@color/accent_warn"
+            android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/rowAbout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:background="@drawable/bg_card"
+            android:clickable="true"
+            android:focusable="true"
+            android:padding="14dp"
+            android:text="@string/pref_about"
+            android:textColor="@color/ink_2"
+            android:textSize="14sp" />
+    </LinearLayout>
+</ScrollView>

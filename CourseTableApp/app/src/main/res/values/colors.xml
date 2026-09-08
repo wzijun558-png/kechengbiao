@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="brand">#3F6AE0</color>
+    <color name="brand_dark">#2C4FAD</color>
+    <color name="brand_light">#E8EEFC</color>
+    <color name="bg">#F7F8FC</color>
+    <color name="card">#FFFFFF</color>
+    <color name="ink">#1C2433</color>
+    <color name="ink_2">#5A6474</color>
+    <color name="ink_3">#99A2B3</color>
+    <color name="line">#E3E7F0</color>
+    <color name="today_bg">#DCE6FF</color>
+    <color name="accent_warn">#E0703F</color>
+
+    <!-- deterministic course palette (material-ish 500 tones) -->
+    <color name="c1">#5B8DEF</color>
+    <color name="c2">#4DB6AC</color>
+    <color name="c3">#F2A33C</color>
+    <color name="c4">#9E7BE8</color>
+    <color name="c5">#E57373</color>
+    <color name="c6">#4FC3F7</color>
+    <color name="c7">#81C784</color>
+    <color name="c8">#FF8A65</color>
+    <color name="c9">#BA68C8</color>
+    <color name="c10">#FFD54F</color>
+    <color name="c11">#A1887F</color>
+    <color name="c12">#90A4AE</color>
+
+    <color name="c1_bg">#E8EEFC</color>
+    <color name="c2_bg">#E4F4F2</color>
+    <color name="c3_bg">#FDF0DC</color>
+    <color name="c4_bg">#F0EAFB</color>
+    <color name="c5_bg">#FCEBEB</color>
+    <color name="c6_bg">#E4F4FD</color>
+    <color name="c7_bg">#E7F5E8</color>
+    <color name="c8_bg">#FEEEE7</color>
+    <color name="c9_bg">#F6EAF8</color>
+    <color name="c10_bg">#FCF6DD</color>
+    <color name="c11_bg">#F1EDEA</color>
+    <color name="c12_bg">#ECF0F2</color>
+</resources>

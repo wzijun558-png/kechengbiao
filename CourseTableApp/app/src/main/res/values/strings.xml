@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">课程表</string>
+    <string name="tab_week">周课表</string>
+    <string name="tab_day">日程</string>
+    <string name="tab_month">月</string>
+    <string name="tab_overview">全部课程</string>
+    <string name="tab_settings">设置</string>
+    <string name="tab_import">导入课表</string>
+
+    <string name="week_of_term">第%1$d周</string>
+    <string name="no_class_today">今天没有课程</string>
+    <string name="no_schedule_hint">尚未导入课表\n\n点击下方「导入课表」选择 .xls / .xlsx 文件\n（支持教务系统打印版课表及其同族变体）</string>
+    <string name="out_of_term">假期 · 非本学期</string>
+    <string name="weeks_badge">%1$d/%2$d周</string>
+
+    <string name="import_title">导入课表文件</string>
+    <string name="import_pick">选择文件（.xls / .xlsx）</string>
+    <string name="import_analyzing">正在解析文件…</string>
+    <string name="import_preview_title">解析结果预览</string>
+    <string name="import_confirm">确认导入</string>
+    <string name="import_cancel">取消</string>
+    <string name="import_failed">导入失败：%1$s</string>
+    <string name="import_not_schedule">未能识别为课表文件（找不到“节次/星期”表头）</string>
+    <string name="import_overwrite_hint">导入将替换当前课表。当前共 %1$d 条排课。</string>
+
+    <string name="settings_title">设置</string>
+    <string name="pref_notify_title">课程通知</string>
+    <string name="pref_notify_summary">每天早晨汇总当天全部课程</string>
+    <string name="pref_notify_time">提醒时间</string>
+    <string name="pref_term_start">学期第1周周一</string>
+    <string name="pref_weekend">显示周末</string>
+    <string name="pref_show_all_slots">始终显示全部节次</string>
+    <string name="pref_clear">清除课表</string>
+    <string name="pref_about">关于</string>
+    <string name="pref_import_here">导入课表…</string>
+
+    <string name="day_of_week_monday">周一</string>
+    <string name="lesson_notification_channel">课程提醒</string>
+    <string name="lesson_notification_channel_desc">课程安排提醒（可显示在锁屏）</string>
+    <string name="notify_title">今日课程 · %1$s</string>
+    <string name="notify_no_class">今天没有安排课程，好好休息吧</string>
+    <string name="notify_permission_hint">请允许通知权限，才能收到每日课程提醒</string>
+
+    <string name="time_rule">时间说明：节次以每两节为一节课（保留节次序号）。\n第1-2节 8:20-10:00\n第3-4节 10:20-12:00\n第5-6节 13:20-15:00\n第7-8节 15:20-17:00\n第9-10节 18:00-19:30</string>
+
+    <string name="course_detail_teacher">教师：%1$s</string>
+    <string name="course_detail_room">教室：%1$s</string>
+    <string name="course_detail_weeks">周次：%1$s</string>
+    <string name="course_detail_time">时间：%1$s</string>
+    <string name="occurrences">%1$d 次排课</string>
+</resources>
