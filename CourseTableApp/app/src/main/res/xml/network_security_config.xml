@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<network-security-config>
+    <!-- 仅对七牛测试域名放行明文 http：APK 直链为 http，文件完整性由 https 清单中的 md5 校验保障 -->
+    <domain-config cleartextTrafficPermitted="true">
+        <domain includeSubdomains="false">tl1yx3dr2.hb-bkt.clouddn.com</domain>
+    </domain-config>
+</network-security-config>

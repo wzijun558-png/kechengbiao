@@ -36,7 +36,9 @@ object UpdateChecker {
         val note: String,
         val apkUrl: String,
         val size: Long = 0L,
-        val md5: String = ""
+        val md5: String = "",
+        /** 备用下载地址（国内镜像优先，如七牛直链）；按序尝试，全部失败才算下载失败。 */
+        val mirrors: List<String> = emptyList()
     ) {
         fun isNewer(): Boolean = versionCode > BuildConfig.VERSION_CODE
 
@@ -65,13 +67,20 @@ object UpdateChecker {
             if (code !in 200..299) throw IllegalStateException("更新服务器返回 $code")
             val text = conn.inputStream.bufferedReader().use { it.readText() }
             val o = JSONObject(text)
+            val mirrorsArr = o.optJSONArray("mirrors")
+            val mirrors = if (mirrorsArr != null) {
+                (0 until mirrorsArr.length()).mapNotNull {
+                    mirrorsArr.optString(it).takeIf { s -> s.isNotBlank() }
+                }
+            } else emptyList()
             return UpdateInfo(
                 versionCode = o.optInt("versionCode", BuildConfig.VERSION_CODE),
                 versionName = o.optString("versionName", BuildConfig.VERSION_NAME),
                 note = o.optString("note", ""),
                 apkUrl = o.optString("apkUrl", ""),
                 size = o.optLong("size", 0L),
-                md5 = o.optString("md5", "").trim()
+                md5 = o.optString("md5", "").trim(),
+                mirrors = mirrors
             )
         } finally {
             conn.disconnect()
@@ -86,24 +95,26 @@ object UpdateChecker {
         }.start()
     }
 
-    /** 下载、校验(md5，可选)并拉起安装（需用户允许“安装未知应用”）。 */
+    /** 下载、校验(md5，可选)并拉起安装（需用户允许“安装未知应用”）。
+     *  按「mirrors(国内镜像) → apkUrl」顺序依次尝试，全部失败才报错。 */
     fun downloadAndInstall(context: Context, info: UpdateInfo): Boolean {
-        val url = info.apkUrl
-        if (url.isBlank()) return false
-        return try {
-            val target = File(context.cacheDir, "coursetable-update.apk")
-            val conn = URL(url).openConnection() as HttpURLConnection
-            try {
-                conn.connectTimeout = 15_000
-                conn.readTimeout = 60_000
-                conn.setRequestProperty("User-Agent", "CourseTable/" + BuildConfig.VERSION_NAME)
-                if (conn.responseCode !in 200..299) return false
-                conn.inputStream.use { input ->
-                    target.outputStream().use { out -> input.copyTo(out) }
-                }
-            } finally {
-                conn.disconnect()
+        val target = File(context.cacheDir, "coursetable-update.apk")
+        val candidates = buildList {
+            info.mirrors.forEach { if (it.isNotBlank()) add(it) }
+            if (info.apkUrl.isNotBlank()) add(info.apkUrl)
+        }
+        var downloaded = false
+        for (url in candidates) {
+            if (downloadTo(url, target)) {
+                downloaded = true
+                break
             }
+        }
+        if (!downloaded) {
+            Toast.makeText(context, "下载失败：所有下载地址均不可用，请稍后重试", Toast.LENGTH_LONG).show()
+            return false
+        }
+        return try {
             if (info.md5.isNotBlank()) {
                 val actual = md5Of(target)
                 if (!actual.equals(info.md5, ignoreCase = true)) {
@@ -126,6 +137,27 @@ object UpdateChecker {
             true
         } catch (e: Exception) {
             Toast.makeText(context, "下载/安装失败：${e.message}", Toast.LENGTH_LONG).show()
+            false
+        }
+    }
+
+    /** 从单个地址下载到 target；失败返回 false（不抛异常）。 */
+    private fun downloadTo(url: String, target: File): Boolean {
+        return try {
+            val conn = URL(url).openConnection() as HttpURLConnection
+            try {
+                conn.connectTimeout = 15_000
+                conn.readTimeout = 60_000
+                conn.setRequestProperty("User-Agent", "CourseTable/" + BuildConfig.VERSION_NAME)
+                if (conn.responseCode !in 200..299) return false
+                conn.inputStream.use { input ->
+                    target.outputStream().use { out -> input.copyTo(out) }
+                }
+                true
+            } finally {
+                conn.disconnect()
+            }
+        } catch (e: Exception) {
             false
         }
     }
