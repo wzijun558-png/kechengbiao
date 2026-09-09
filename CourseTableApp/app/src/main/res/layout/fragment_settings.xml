@@ -47,7 +47,7 @@
             android:layout_marginTop="4dp"
             android:background="@drawable/bg_card"
             android:padding="14dp"
-            android:text="通知可显示在锁屏；请任选一种提醒方式"
+            android:text="通知可显示在锁屏；请任选一种提醒方式（锁屏不显示时：系统设置 → 通知 → 课程表 → 允许锁屏通知）"
             android:textColor="@color/ink_3"
             android:textSize="12sp" />
 
@@ -119,6 +119,20 @@
             android:padding="14dp"
             android:text="消除日历同步"
             android:textColor="@color/accent_warn"
+            android:textSize="14sp"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/rowClockSync"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:background="@drawable/bg_card"
+            android:clickable="true"
+            android:focusable="true"
+            android:padding="14dp"
+            android:text="同步到本机时钟（打开时钟 App 逐个确认，闹铃附课程备注）"
+            android:textColor="@color/ink_2"
             android:textSize="14sp"
             android:visibility="gone" />
 

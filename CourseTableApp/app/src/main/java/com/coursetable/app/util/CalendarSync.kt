@@ -111,7 +111,9 @@ object CalendarSync {
                 ).atZone(zone).toInstant().toEpochMilli()
                 val values = ContentValues().apply {
                     put(CalendarContract.Events.CALENDAR_ID, calId)
-                    put(CalendarContract.Events.TITLE, e.name.trim() + " " + TimeText.slotLabelAndRange(e.startSlot, e.slotSpan).first)
+                    val slot = TimeText.slotLabelAndRange(e.startSlot, e.slotSpan)
+                    // 标题带 24 小时制时间：即使系统日历显示 12 小时制，事件名里仍是 24 小时制
+                    put(CalendarContract.Events.TITLE, e.name.trim() + " " + slot.first + " " + slot.second)
                     put(CalendarContract.Events.DESCRIPTION, buildString {
                         if (e.teacher.isNotBlank()) append("教师：").append(e.teacher.trim()).append('\n')
                         if (e.room.isNotBlank()) append("教室：").append(e.room.trim()).append('\n')

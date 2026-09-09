@@ -10,6 +10,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
+import android.provider.AlarmClock
 import android.widget.Toast
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
@@ -53,8 +54,10 @@ object DailyReminder {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val nm = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
             val cur = nm.getNotificationChannel(CHANNEL_ID)
-            // 升级为“锁屏可见 + 高优先级”：旧频道若已存在且重要性过低则重建
-            if (cur != null && cur.importance < NotificationManager.IMPORTANCE_HIGH) {
+            // 升级为“锁屏可见 + 高优先级”：旧频道若重要性过低或锁屏不可见则重建
+            if (cur != null && (cur.importance < NotificationManager.IMPORTANCE_HIGH ||
+                    cur.lockscreenVisibility < NotificationCompat.VISIBILITY_PUBLIC)
+            ) {
                 nm.deleteNotificationChannel(CHANNEL_ID)
             }
             val ch = NotificationChannel(
@@ -78,7 +81,9 @@ object DailyReminder {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val nm = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
             val cur = nm.getNotificationChannel(CHANNEL_MSG_ID)
-            if (cur != null && cur.importance < NotificationManager.IMPORTANCE_HIGH) {
+            if (cur != null && (cur.importance < NotificationManager.IMPORTANCE_HIGH ||
+                    cur.lockscreenVisibility < NotificationCompat.VISIBILITY_PUBLIC)
+            ) {
                 nm.deleteNotificationChannel(CHANNEL_MSG_ID)
             }
             val ch = NotificationChannel(
@@ -130,6 +135,64 @@ object DailyReminder {
     }
 
     fun cancel(context: Context) = cancelAll(context)
+
+    // ---------------- 本机时钟 App 唤起（ACTION_SET_ALARM） ----------------
+    /** 在系统时钟 App 中逐个发起闹铃设置（附 24 小时制课程备注），返回发起的闹铃数。 */
+    fun openSystemClock(context: Context): Int {
+        val store = Store(context)
+        val schedule = store.schedule() ?: return 0
+        val cal = TermCalendar(schedule.week1Monday, schedule.weekCount)
+        val lead = store.classLeadMin
+        val today = LocalDate.now()
+        data class AlarmItem(val h: Int, val m: Int, val label: String)
+
+        val items = ArrayList<AlarmItem>()
+        if (store.notifyMode == 0) {
+            val (h, m) = store.notifyTime
+            items.add(AlarmItem(h, m, "课程表 · 每日课程汇总（%02d:%02d）".format(h, m)))
+        } else {
+            loop@ for (offset in 0L until 7L) {
+                val date = today.plusDays(offset)
+                val week = cal.weekOf(date) ?: continue
+                val dIdx = TermCalendar.indexOfDay(date.dayOfWeek)
+                val list = schedule.entriesOn(week, dIdx)
+                for (e in list) {
+                    val startMin = TimeText.startMinutes(e.startSlot) ?: continue
+                    if (e.startSlot > 10) continue
+                    val start = LocalDateTime.of(date, LocalTime.of(startMin / 60, startMin % 60))
+                    val fire = start.minusMinutes(lead.toLong())
+                    if (fire.isBefore(LocalDateTime.now())) continue
+                    val (_, range) = TimeText.slotLabelAndRange(e.startSlot, e.slotSpan)
+                    val msg = buildString {
+                        append(courseDisplayName(e))
+                        append(' ').append(range)          // 24 小时制时间
+                        if (e.room.isNotBlank()) append(" 教室").append(e.room.trim())
+                    }
+                    items.add(AlarmItem(fire.hour, fire.minute, msg))
+                    if (items.size >= 20) break@loop
+                }
+            }
+        }
+        if (items.isEmpty()) return 0
+        // 逐个唤起时钟 App 的“新建闹钟”界面（用户逐一确认保存）
+        val handler = android.os.Handler(android.os.Looper.getMainLooper())
+        items.forEachIndexed { i, it ->
+            handler.postDelayed({
+                try {
+                    val intent = Intent(AlarmClock.ACTION_SET_ALARM).apply {
+                        putExtra(AlarmClock.EXTRA_HOUR, it.h)
+                        putExtra(AlarmClock.EXTRA_MINUTES, it.m)
+                        putExtra(AlarmClock.EXTRA_MESSAGE, it.label)
+                        addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                    }
+                    context.startActivity(intent)
+                } catch (ex: Exception) {
+                    Toast.makeText(context, "无法唤起本机时钟应用", Toast.LENGTH_LONG).show()
+                }
+            }, i * 500L)
+        }
+        return items.size
+    }
 
     // ---------------- 模式0：每日定时汇总 ----------------
     private fun planDailyAlarm(context: Context, store: Store) {

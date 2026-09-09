@@ -50,6 +50,7 @@ class SettingsFragment : Fragment() {
         val rbApp = v.findViewById<RadioButton>(R.id.rbApp)
         val rowViaHint = v.findViewById<TextView>(R.id.rowViaHint)
         val rowClearCalSync = v.findViewById<TextView>(R.id.rowClearCalSync)
+        val rowClockSync = v.findViewById<TextView>(R.id.rowClockSync)
         val rowTimingLabel = v.findViewById<TextView>(R.id.rowTimingLabel)
         val rowTime = v.findViewById<TextView>(R.id.rowNotifyTime)
         val rowTerm = v.findViewById<TextView>(R.id.rowTermStart)
@@ -79,7 +80,8 @@ class SettingsFragment : Fragment() {
             rbClass.isChecked = mode == 1
             rowTime.visibility = if (!isCalendar && mode == 0) View.VISIBLE else View.GONE
             rowLead.visibility = if (!isCalendar && mode == 1) View.VISIBLE else View.GONE
-            rowLead.text = "课前提醒时间：上课前 ${store.classLeadMin} 分钟（点按切换 5/10/15/30）"
+            rowLead.text = "课前提醒时间：上课前 ${store.classLeadMin} 分钟（点按自定义 0-120）"
+            rowClockSync.visibility = if (via == 0 && store.notifyEnabled) View.VISIBLE else View.GONE
             rowViaHint.text = when (via) {
                 1 -> "已选择手机日历：将课程写入系统日历，由日历在每节课前 ${store.classLeadMin} 分钟提醒。"
                 2 -> "已选择软件消息：应用内消息通知（不依赖日历与时钟），锁屏可见。"
@@ -185,14 +187,27 @@ class SettingsFragment : Fragment() {
         }
 
         rowLead.setOnClickListener {
-            val next = when (store.classLeadMin) {
-                5 -> 10; 10 -> 15; 15 -> 30; else -> 5
+            val input = android.widget.EditText(requireContext()).apply {
+                setText(store.classLeadMin.toString())
+                inputType = android.text.InputType.TYPE_CLASS_NUMBER
+                hint = "0-120 分钟"
             }
-            store.classLeadMin = next
-            applyModeUi()
-            if (store.notifyEnabled) {
-                if (store.notifyVia == 1) syncNotifications() else DailyReminder.reschedule(requireContext())
-            }
+            MaterialAlertDialogBuilder(requireContext())
+                .setTitle("课前提醒时间")
+                .setMessage("上课前多少分钟提醒？（0-120，0 表示上课时提醒）")
+                .setView(input)
+                .setNegativeButton("取消", null)
+                .setPositiveButton("确定") { _, _ ->
+                    val v = input.text.toString().trim()
+                    if (v.isNotEmpty()) {
+                        store.classLeadMin = v.toIntOrNull()?.coerceIn(0, 120) ?: store.classLeadMin
+                        applyModeUi()
+                        if (store.notifyEnabled) {
+                            if (store.notifyVia == 1) syncNotifications() else DailyReminder.reschedule(requireContext())
+                        }
+                    }
+                }
+                .show()
         }
 
         rowTime.setOnClickListener {
@@ -241,6 +256,19 @@ class SettingsFragment : Fragment() {
                     }.start()
                 }
                 .show()
+        }
+
+        rowClockSync.setOnClickListener {
+            val n = DailyReminder.openSystemClock(requireContext())
+            if (n > 0) {
+                Toast.makeText(
+                    requireContext(),
+                    "已向本机时钟发起 $n 个闹铃，请在时钟 App 中逐个确认保存",
+                    Toast.LENGTH_LONG
+                ).show()
+            } else {
+                Toast.makeText(requireContext(), "当前没有可设置的闹铃", Toast.LENGTH_SHORT).show()
+            }
         }
 
         rowUpdate.setOnClickListener {
