@@ -96,7 +96,7 @@ object UpdateChecker {
     }
 
     /** 下载、校验(md5，可选)并拉起安装（需用户允许“安装未知应用”）。
-     *  按「mirrors(国内镜像) → apkUrl」顺序依次尝试，全部失败才报错。 */
+     *  按「mirrors(国内镜像) → apkUrl」顺序依次尝试（每个地址自动重试一次），全部失败才报错。 */
     fun downloadAndInstall(context: Context, info: UpdateInfo): Boolean {
         val target = File(context.cacheDir, "coursetable-update.apk")
         val candidates = buildList {
@@ -104,14 +104,24 @@ object UpdateChecker {
             if (info.apkUrl.isNotBlank()) add(info.apkUrl)
         }
         var downloaded = false
+        val errors = ArrayList<String>()
         for (url in candidates) {
-            if (downloadTo(url, target)) {
-                downloaded = true
-                break
+            var ok = false
+            var lastErr = "未知错误"
+            for (attempt in 1..2) {   // 每个地址重试一次
+                val r = downloadTo(url, target)
+                if (r == null) { ok = true; break }
+                lastErr = r
             }
+            if (ok) { downloaded = true; break }
+            errors.add(shortHost(url) + "：" + lastErr)
         }
         if (!downloaded) {
-            Toast.makeText(context, "下载失败：所有下载地址均不可用，请稍后重试", Toast.LENGTH_LONG).show()
+            Toast.makeText(
+                context,
+                "下载失败：" + errors.joinToString("；").let { if (it.length > 60) it.take(60) + "…" else it },
+                Toast.LENGTH_LONG
+            ).show()
             return false
         }
         return try {
@@ -141,26 +151,30 @@ object UpdateChecker {
         }
     }
 
-    /** 从单个地址下载到 target；失败返回 false（不抛异常）。 */
-    private fun downloadTo(url: String, target: File): Boolean {
+    /** 从单个地址下载到 target；成功返回 null，失败返回简短原因。 */
+    private fun downloadTo(url: String, target: File): String? {
         return try {
             val conn = URL(url).openConnection() as HttpURLConnection
             try {
                 conn.connectTimeout = 15_000
-                conn.readTimeout = 60_000
+                conn.readTimeout = 120_000
                 conn.setRequestProperty("User-Agent", "CourseTable/" + BuildConfig.VERSION_NAME)
-                if (conn.responseCode !in 200..299) return false
+                val code = conn.responseCode
+                if (code !in 200..299) return "HTTP $code"
                 conn.inputStream.use { input ->
                     target.outputStream().use { out -> input.copyTo(out) }
                 }
-                true
+                null
             } finally {
                 conn.disconnect()
             }
         } catch (e: Exception) {
-            false
+            (e.message ?: e.javaClass.simpleName).take(24)
         }
     }
+
+    private fun shortHost(url: String): String =
+        runCatching { java.net.URI(url).host }.getOrDefault(url.take(14))
 
     private fun md5Of(file: File): String {
         val md = MessageDigest.getInstance("MD5")
