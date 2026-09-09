@@ -1,17 +1,17 @@
-课程表 v1.4 下载方式（2026-09-08 更新）
+课程表 v1.5 下载方式（2026-09-08 更新）
 ========================================
 
 【主下载（.apk 文件，点击即可安装）】
 GitHub 官方直链：
-https://github.com/wzijun558-png/kechengbiao/releases/download/v1.4/course-table-1.4.apk
+https://github.com/wzijun558-png/kechengbiao/releases/download/v1.5/course-table-1.5.apk
 
-【国内加速镜像（.apk 文件）】
-https://ghfast.top/https://github.com/wzijun558-png/kechengbiao/releases/download/v1.4/course-table-1.4.apk
-https://gh-proxy.com/https://github.com/wzijun558-png/kechengbiao/releases/download/v1.4/course-table-1.4.apk
-https://ghproxy.net/https://github.com/wzijun558-png/kechengbiao/releases/download/v1.4/course-table-1.4.apk
+【国内加速镜像（.apk 文件，推荐国内网络使用）】
+https://gh-proxy.com/https://github.com/wzijun558-png/kechengbiao/releases/download/v1.5/course-table-1.5.apk
+https://ghproxy.net/https://github.com/wzijun558-png/kechengbiao/releases/download/v1.5/course-table-1.5.apk
+https://ghfast.top/https://github.com/wzijun558-png/kechengbiao/releases/download/v1.5/course-table-1.5.apk
 
-【七牛云（App 内自动更新使用；网页下载为 .zip，改名 .apk 后安装）】
-http://tl1yx3dr2.hb-bkt.clouddn.com/course-table-1.4.zip
+【七牛云（App 内自动更新兜底；网页下载为 .zip，改名 .apk 后安装）】
+http://tl1yx3dr2.hb-bkt.clouddn.com/course-table-1.5.zip
 
 【更新清单】（App 自动检查用）
 https://raw.githubusercontent.com/wzijun558-png/kechengbiao/main/update.json
@@ -20,17 +20,12 @@ https://raw.githubusercontent.com/wzijun558-png/kechengbiao/main/update.json
 https://github.com/wzijun558-png/kechengbiao
 
 【文件校验】
-大小：5978783 字节（约 5.7 MiB）
-MD5：c494c3c0a0f91d2cee2b900361244a19
-
-【v1.4 更新内容】
-- 时钟方式新增「同步到本机时钟」：唤起系统时钟 App 逐个设置闹铃（附 24 小时制课程备注）
-- 锁屏通知加固（频道自动升级锁屏可见 + 全屏提醒权限）
-- 课前提醒时间支持自定义 0-120 分钟
-- 所有时间统一 24 小时制
+大小：5979291 字节（约 5.7 MiB）
+MD5：ab836e4a2b4b2e36cfe135c414ee8f03
 
 【升级说明】
-- 已安装旧版本的用户：App 内「设置 → 检查更新」直接在线升级（签名一致，无需卸载），自动优先走七牛云直链、失败回退 GitHub。
+- 已安装旧版本的用户：App 内「设置 → 检查更新」直接在线升级（签名一致，无需卸载）。
+  下载自动依次尝试 3 个国内加速镜像 + 七牛 + GitHub，每个地址自动重试。
 - 首次安装：需允许「安装未知应用」。
 
 【配套文件】
