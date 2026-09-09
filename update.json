@@ -4,6 +4,9 @@
   "note": "支持同步本机时钟闹铃、锁屏通知加固、课前提醒自定义0-120分钟、时间统一24小时制。",
   "apkUrl": "https://github.com/wzijun558-png/kechengbiao/releases/download/v1.4/course-table-1.4.apk",
   "mirrors": [
+    "https://gh-proxy.com/https://github.com/wzijun558-png/kechengbiao/releases/download/v1.4/course-table-1.4.apk",
+    "https://ghproxy.net/https://github.com/wzijun558-png/kechengbiao/releases/download/v1.4/course-table-1.4.apk",
+    "https://ghfast.top/https://github.com/wzijun558-png/kechengbiao/releases/download/v1.4/course-table-1.4.apk",
     "http://tl1yx3dr2.hb-bkt.clouddn.com/course-table-1.4.zip"
   ],
   "size": 5978783,
