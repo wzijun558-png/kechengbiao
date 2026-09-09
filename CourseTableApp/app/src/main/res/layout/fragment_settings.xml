@@ -74,7 +74,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:buttonTint="@color/brand"
-                android:text="时钟（本机闹钟）"
+                android:text="时钟（自带闹钟）"
                 android:textColor="@color/ink"
                 android:textSize="12sp" />
 
@@ -123,7 +123,7 @@
             android:visibility="gone" />
 
         <TextView
-            android:id="@+id/rowClockSync"
+            android:id="@+id/rowRingtone"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="6dp"
@@ -131,7 +131,7 @@
             android:clickable="true"
             android:focusable="true"
             android:padding="14dp"
-            android:text="同步到本机时钟（打开时钟 App 逐个确认，闹铃附课程备注）"
+            android:text="闹钟铃声"
             android:textColor="@color/ink_2"
             android:textSize="14sp"
             android:visibility="gone" />

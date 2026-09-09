@@ -28,6 +28,14 @@
             </intent-filter>
         </activity>
 
+        <activity
+            android:name=".ui.AlarmRingActivity"
+            android:excludeFromRecents="true"
+            android:exported="false"
+            android:launchMode="singleTask"
+            android:showWhenLocked="true"
+            android:turnScreenOn="true" />
+
         <receiver
             android:name=".notify.DailySummaryReceiver"
             android:exported="false" />

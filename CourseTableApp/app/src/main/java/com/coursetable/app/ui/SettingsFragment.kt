@@ -1,8 +1,11 @@
 package com.coursetable.app.ui
 
 import android.Manifest
+import android.app.Activity
 import android.app.TimePickerDialog
+import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -16,6 +19,7 @@ import androidx.fragment.app.Fragment
 import com.coursetable.app.MainActivity
 import com.coursetable.app.R
 import com.coursetable.app.notify.DailyReminder
+import com.coursetable.app.util.AlarmRinger
 import com.coursetable.app.util.CalendarSync
 import com.coursetable.app.util.UpdateChecker
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -29,6 +33,7 @@ class SettingsFragment : Fragment() {
     companion object {
         const val TAG = "settings"
         private const val REQ_CALENDAR = 501
+        private const val REQ_RINGTONE = 502
     }
 
     private var root: View? = null
@@ -50,7 +55,7 @@ class SettingsFragment : Fragment() {
         val rbApp = v.findViewById<RadioButton>(R.id.rbApp)
         val rowViaHint = v.findViewById<TextView>(R.id.rowViaHint)
         val rowClearCalSync = v.findViewById<TextView>(R.id.rowClearCalSync)
-        val rowClockSync = v.findViewById<TextView>(R.id.rowClockSync)
+        val rowRingtone = v.findViewById<TextView>(R.id.rowRingtone)
         val rowTimingLabel = v.findViewById<TextView>(R.id.rowTimingLabel)
         val rowTime = v.findViewById<TextView>(R.id.rowNotifyTime)
         val rowTerm = v.findViewById<TextView>(R.id.rowTermStart)
@@ -81,11 +86,14 @@ class SettingsFragment : Fragment() {
             rowTime.visibility = if (!isCalendar && mode == 0) View.VISIBLE else View.GONE
             rowLead.visibility = if (!isCalendar && mode == 1) View.VISIBLE else View.GONE
             rowLead.text = "课前提醒时间：上课前 ${store.classLeadMin} 分钟（点按自定义 0-120）"
-            rowClockSync.visibility = if (via == 0 && store.notifyEnabled) View.VISIBLE else View.GONE
+            rowRingtone.visibility = if (via == 0 && store.notifyEnabled) View.VISIBLE else View.GONE
+            rowRingtone.text = "闹钟铃声：" +
+                AlarmRinger.displayName(requireContext(), store.alarmRingtone, store.alarmRingtoneName) +
+                "（点按选择）"
             rowViaHint.text = when (via) {
                 1 -> "已选择手机日历：将课程写入系统日历，由日历在每节课前 ${store.classLeadMin} 分钟提醒。"
                 2 -> "已选择软件消息：应用内消息通知（不依赖日历与时钟），锁屏可见。"
-                else -> "已选择时钟：本机闹钟逐条设置闹铃并附课程备注；北京时间 24:00 自动清理已发生闹钟。"
+                else -> "已选择时钟：自带闹钟响铃（内置 20 款铃声，可自定义）；北京时间 24:00 自动清理已发生闹钟。"
             }
             rowModeHint.text = if (mode == 0) {
                 "每天在设定时间推送当天全部课程（锁屏可见）。"
@@ -258,17 +266,22 @@ class SettingsFragment : Fragment() {
                 .show()
         }
 
-        rowClockSync.setOnClickListener {
-            val n = DailyReminder.openSystemClock(requireContext())
-            if (n > 0) {
-                Toast.makeText(
-                    requireContext(),
-                    "已向本机时钟发起 $n 个闹铃，请在时钟 App 中逐个确认保存",
-                    Toast.LENGTH_LONG
-                ).show()
-            } else {
-                Toast.makeText(requireContext(), "当前没有可设置的闹铃", Toast.LENGTH_SHORT).show()
-            }
+        rowRingtone.setOnClickListener {
+            val builtIn = AlarmRinger.builtInRingtones(requireContext())
+            val items = (builtIn + "自定义铃声…").toTypedArray()
+            MaterialAlertDialogBuilder(requireContext())
+                .setTitle("选择闹钟铃声")
+                .setItems(items) { _, which ->
+                    if (which < builtIn.size) {
+                        act.store.alarmRingtone = "asset:" + builtIn[which]
+                        act.store.alarmRingtoneName = builtIn[which]
+                        applyModeUi()
+                    } else {
+                        pickCustomRingtone()
+                    }
+                }
+                .setNegativeButton("取消", null)
+                .show()
         }
 
         rowUpdate.setOnClickListener {
@@ -373,5 +386,47 @@ class SettingsFragment : Fragment() {
             }
             if (act.store.notifyEnabled && act.store.notifyVia == 1) runCalendarSync()
         }
+    }
+
+    /** 打开系统文件选择器选自定义铃声。 */
+    private fun pickCustomRingtone() {
+        val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
+            addCategory(Intent.CATEGORY_OPENABLE)
+            type = "audio/*"
+        }
+        startActivityForResult(intent, REQ_RINGTONE)
+    }
+
+    @Deprecated("Deprecated in Java")
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode != REQ_RINGTONE || resultCode != Activity.RESULT_OK) return
+        val uri = data?.data ?: return
+        val act = activity as? MainActivity ?: return
+        runCatching {
+            requireContext().contentResolver.takePersistableUriPermission(
+                uri, Intent.FLAG_GRANT_READ_URI_PERMISSION
+            )
+        }
+        act.store.alarmRingtone = "uri:" + uri.toString()
+        act.store.alarmRingtoneName = queryRingtoneName(uri)
+        val row = root?.findViewById<TextView>(R.id.rowRingtone)
+        row?.text = "闹钟铃声：" +
+            AlarmRinger.displayName(requireContext(), act.store.alarmRingtone, act.store.alarmRingtoneName) +
+            "（点按选择）"
+        Toast.makeText(requireContext(), "已设置自定义铃声", Toast.LENGTH_SHORT).show()
+    }
+
+    private fun queryRingtoneName(uri: Uri): String {
+        var name = ""
+        runCatching {
+            requireContext().contentResolver.query(uri, null, null, null, null)?.use { c ->
+                if (c.moveToFirst()) {
+                    val idx = c.getColumnIndex(android.provider.OpenableColumns.DISPLAY_NAME)
+                    if (idx >= 0) name = c.getString(idx) ?: ""
+                }
+            }
+        }
+        return name
     }
 }

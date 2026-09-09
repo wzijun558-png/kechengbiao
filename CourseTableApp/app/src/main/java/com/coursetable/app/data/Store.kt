@@ -29,6 +29,8 @@ class Store(context: Context) {
         private const val KEY_CLASS_LEAD = "class_lead_min"
         private const val KEY_NOTIFY_VIA = "notify_via"
         private const val KEY_AUTO_UPDATE_DAY = "auto_update_day"
+        private const val KEY_RINGTONE = "alarm_ringtone"
+        private const val KEY_RINGTONE_NAME = "alarm_ringtone_name"
     }
 
     fun schedule(): Schedule? {
@@ -89,10 +91,20 @@ class Store(context: Context) {
         get() = sp.getInt(KEY_CLASS_LEAD, 10).let { if (it in 0..120) it else 10 }
         set(v) = sp.edit().putInt(KEY_CLASS_LEAD, v.coerceIn(0, 120)).apply()
 
-    /** 通知方式：0=时钟(本机闹钟)；1=手机日历(同步系统日历)；2=软件消息(应用内通知)。 */
+    /** 通知方式：0=时钟(自带闹钟)；1=手机日历(同步系统日历)；2=软件消息(应用内通知)。 */
     var notifyVia: Int
         get() = sp.getInt(KEY_NOTIFY_VIA, 0).let { if (it in 0..2) it else 0 }
         set(v) = sp.edit().putInt(KEY_NOTIFY_VIA, if (v in 0..2) v else 0).apply()
+
+    /** 闹钟铃声：""=默认内置；"asset:<文件名>"=内置铃声；"uri:<contentUri>"=自定义铃声。 */
+    var alarmRingtone: String
+        get() = sp.getString(KEY_RINGTONE, "") ?: ""
+        set(v) = sp.edit().putString(KEY_RINGTONE, v).apply()
+
+    /** 自定义铃声的显示名。 */
+    var alarmRingtoneName: String
+        get() = sp.getString(KEY_RINGTONE_NAME, "") ?: ""
+        set(v) = sp.edit().putString(KEY_RINGTONE_NAME, v).apply()
 
     /** 自动检查更新的日期（每日一次）。 */
     var lastAutoUpdateDay: String
